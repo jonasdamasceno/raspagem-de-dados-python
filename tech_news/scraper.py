@@ -35,14 +35,28 @@ def scrape_updates(html_content):
 
 # Requisito 3
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    try:
+        data = Selector(text=html_content)
+        return data.css(".next::attr(href)").get()
+    except ValueError:
+        return None
 
 
 # Requisito 4
 def scrape_news(html_content):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    data = Selector(text=html_content)
+
+    return {
+        "url": data.css('link[rel="canonical"]::attr(href)').get(),
+        "title": data.css("h1.entry-title::text").get().strip(),
+        "timestamp": data.css(".meta-date::text").get(),
+        "writer": data.css(".author a::text").get(),
+        "reading_time": int(
+            data.css(".meta-reading-time::text").get().split()[0]
+        ),
+        "summary": "".join(data.xpath("(//p)[1]//text()").getall()).strip(),
+        "category": data.css(".category-style .label::text").get(),
+    }
 
 
 # Requisito 5
