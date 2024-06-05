@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 
 # Requisito 1
@@ -20,8 +21,16 @@ def fetch(url, timeout=10):
 
 # Requisito 2
 def scrape_updates(html_content):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    if not html_content:
+        return []
+
+    try:
+        selector = Selector(text=html_content)
+        links = selector.css(".cs-overlay-link::attr(href)").extract()
+        return links
+    except Exception as e:
+        print(f"An error occurred while scraping updates: {e}")
+        return []
 
 
 # Requisito 3
