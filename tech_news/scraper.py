@@ -2,6 +2,8 @@ import requests
 import time
 from parsel import Selector
 
+from tech_news.database import create_news
+
 
 # Requisito 1
 def fetch(url, timeout=10):
@@ -16,7 +18,7 @@ def fetch(url, timeout=10):
         print(f"An error occurred: {e}")
         return None
     finally:
-        time.sleep(1)
+        time.sleep(1) 
 
 
 # Requisito 2
@@ -61,5 +63,24 @@ def scrape_news(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
-    raise NotImplementedError
+    base_url = "https://blog.betrybe.com"
+    news_list = []
+
+    while len(news_list) < amount:
+        request = fetch(base_url)
+        urls = scrape_updates(request)
+
+        for url in urls:
+            data = fetch(url)
+            news_list.append(scrape_news(data))
+
+            if len(news_list) >= amount:
+                break
+
+        base_url = scrape_next_page_link(request)
+
+        if base_url is None:
+            break
+
+    create_news(news_list)
+    return news_list
