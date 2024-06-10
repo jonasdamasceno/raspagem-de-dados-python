@@ -18,7 +18,7 @@ def fetch(url, timeout=10):
         print(f"An error occurred: {e}")
         return None
     finally:
-        time.sleep(1) 
+        time.sleep(1)
 
 
 # Requisito 2
